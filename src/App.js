@@ -1,79 +1,99 @@
 import logo from './logo.svg';
 import './App.css';
 import './index.scss';
+import Card from './Components/Card';
+import Header from './Components/Header';
+import Drawer from './Components/Drawer/Drawer';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
-function App() {
+
+const App = (props) => {
+
+  const [items, setItems] = useState([])
+  const [CardItems, setCardItems] = useState([])
+  const [isBasket, setBasket] = useState(false)
+  const [search, setSearch] = useState('')
+
+  
+  const addProduct = (
+      obj
+  ) => {
+    axios.post('https://61338c6c7859e700176a372d.mockapi.io/store/sheackers/cart', obj)
+    setCardItems((prev) =>[...prev, obj])
+  }
+
+  const onSearchChange = (event) => {
+    setSearch(event.target.value)
+  }
+
+  const clearSearch = () => {
+    setSearch('')
+  }
+
+  const removeCard = (id) => {
+    axios.delete(`https://61338c6c7859e700176a372d.mockapi.io/store/sheackers/cart${id}`)
+    setCardItems((prev) => prev.filter(item => item.id !== id))
+  }
+
+  useEffect(() => {
+    axios.get('https://61338c6c7859e700176a372d.mockapi.io/store/sheackers/items')
+      .then((res) => {
+      setItems(res.data)
+      })
+    
+    axios.get('https://61338c6c7859e700176a372d.mockapi.io/store/sheackers/items')
+      .then((res) => {
+        setCardItems(res.data)
+      })
+  }, [])
+  
+  let cardfullElement =
+    items.filter(item => item.shoes.toLowerCase().includes(search))
+      .map((crd, index) => <Card key={index} shoes={crd.shoes}
+      price={crd.price} buy={crd.buy} url={crd.url}
+      onPlus={(obj) => addProduct(obj)} />);
+
+
+
   return (
     <div className="wrapper clear">
-      <header className='d-flex justify-between align-center p-40'>
-        <div className='d-flex align-center'>
-          <img width={40} height={40} src='/img/orig.png'/>
-            <div>
-              <h2 className='text-uppercase'>React Sheackers</h2>
-              <p>the store fot the best shoes</p>
-            </div>
-        </div>
-        <ul className='d-flex'>
-          <li className='mr-30'>
-            <img width={40} height={40} src='/img/cart.png'/>
-            <span>700 $</span>
-          </li>
-          <li>
-            <img width={40} height={40} src='/img/user.png'/>
-          </li>
-        </ul>
-      </header>
+
+      {isBasket ? <Drawer items={CardItems} onRemove={removeCard} onClose={() => setBasket(false)} /> : null}
+      
+      <Header onClickCard={() => setBasket(true)}/>
       <div className='content p-40'>
-        <h1 className='mb-40'>all the shoes</h1>
-        <div className='d-flex'>
-            <div className='card'>
-            <img width={133} height={112} src='/img/asic1.png' alt='' />
-            <h5> Элитные кроссовки ASICS Gel - Nimbus 21 Winterized </h5>
-            <div className='d-flex justify between align-center'>
-              <div className='d-flex flex-column'>
-                <span>price:</span>
-                <b>600 $</b>
-              </div>
-              <button className='button'>buy</button>
-            </div>
+        <div className='d-flex align-center justify-between mb-40'>
+          <h1>{search ? `search on request ${search}` : 'all the shoes'}</h1>
+          <div className='search-block d-flex'>
+            
+            <img width={40} height={40} src='/img/search.png' alt='Search' />
+            {search ? <img onClick={clearSearch} className='clear' width={40} height={40} src='/img/delete.png' alt='Search' /> : null}
+            <input onChange={onSearchChange} value={search} placeholder='Search....'/>
           </div>
-        <div className='card'>
-            <img width={133} height={112} src='/img/asic2.png' alt='' />
-            <h5> Элитные кроссовки ASICS Gel - Nimbus 21 Winterized </h5>
-            <div className='d-flex justify between align-center'>
-              <div className='d-flex flex-column'>
-                <span>price:</span>
-                <b>600 $</b>
-              </div>
-              <button className='button'>buy</button>
-            </div>
         </div>
-        <div className='card'>
-            <img width={133} height={112} src='/img/asic3.png' alt='' />
-            <h5> Элитные кроссовки ASICS Gel - Nimbus 21 Winterized </h5>
-            <div className='d-flex justify between align-center'>
-              <div className='d-flex flex-column'>
-              <span>price:</span>
-              <b>600 $</b>
-              </div>
-              <button className='button'>buy</button>
-            </div>
-        </div>
-        <div className='card'>
-            <img width={133} height={112} src='/img/asic4.png' alt='' />
-            <h5> Элитные кроссовки ASICS Gel - Nimbus 21 Winterized </h5>
-            <div className='d-flex justify between align-center'>
-              <div className='d-flex flex-column'>
-              <span>price:</span>
-              <b>600 $</b>
-              </div>
-              <button className='button'>buy</button>
-            </div>
-          </div>  
+        <div className='d-flex flex-wrap'>
+          {cardfullElement}
         </div>
       </div>
     </div>
   );
 }
+
+// let mapStateToProps = (state) => {
+//   return {
+//     cardfull: state.cardPage.cardfull
+//   }
+// }
+
+// let mapDispatchToProps = (dispatch) => {
+//   return {
+//     addCardfull: (cardfull) => {
+//       dispatch(cardAC(cardfull))
+//     }
+//   }
+// }
+
+// let AppContainer = connect(mapStateToProps, mapDispatchToProps)(App)
 
 export default App;
