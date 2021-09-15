@@ -6,15 +6,16 @@ import reportWebVitals from './reportWebVitals';
 import 'macro-css';
 import { Provider } from 'react-redux';
 import {BrowserRouter} from 'react-router-dom';
+import {BrowserRouter as Router} from 'react-router-dom';
 import store from './store/store.js';
 
 
 
 ReactDOM.render(
   <BrowserRouter>
-  <Provider store={store}>
-    <App />
-  </Provider>
+    <Router>
+      <App />
+    </Router>
     </BrowserRouter>, document.getElementById('root')
 );
 

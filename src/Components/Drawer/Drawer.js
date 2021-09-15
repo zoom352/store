@@ -15,7 +15,7 @@ const Drawer = ({ onClose, onRemove, items = [] }) => {
               basket
               <img className='cu-p' width={40} height={40} onClick={onClose} src='/img/delete.png' /></h3>
           
-            <div className='items'>
+            {items.length > 0 ? <div className='items'>
               
               {items.map((obj) => (
                
@@ -31,9 +31,13 @@ const Drawer = ({ onClose, onRemove, items = [] }) => {
                   height={40} src='/img/delete.png' /> 
               </div>
               ))}
-            </div>
+            </div> : <div><p>its an empty</p>
+                <button onClick={onClose}>you can comeback</button>
+                      </div>}
+
           
-          <div className='cartTotalBlock'>
+            <div className='cartTotalBlock'>
+              
             <ul className='cartTotalBlock'>
             <li className='d-flex'>
               <span>Итого</span>

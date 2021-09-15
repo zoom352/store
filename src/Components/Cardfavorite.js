@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import ContentLoader from "react-content-loader"
 
-const Card = ({
+
+const CardFavorite = ({
     id,
     url,
     shoes,
@@ -9,13 +9,13 @@ const Card = ({
     buy,
     onPlus,
     onLike,
-    loading=false
+  favorited,
+  loading
   }) => {
 
   const [isAdded, setAdded] = useState(false)
-  const [isLike, setLike] = useState(true)
+  const [isLike, setLike] = useState(favorited)
 
-  
 
   const addWasChanged = () => {
     onPlus({url,
@@ -26,34 +26,15 @@ const Card = ({
   }
 
   const likeWasChanged = () => {
-    onLike({
-      id,
-      url,
+    onLike({id, url,
       shoes,
       price,
-      buy
-    })
-    setLike(!isLike)
+      buy})
+    setLike(isLike)
   }
 
-  return <div className='card'>
-    {loading ?
-      <ContentLoader
-        speed={2}
-        width={150}
-        height={250}
-        viewBox="0 0 150 250"
-        backgroundColor="#f3f3f3"
-        foregroundColor="#ecebeb"
-      >
-        <rect x="1" y="0" rx="10" ry="10" width="150" height="155" />
-        <rect x="0" y="167" rx="10" ry="10" width="150" height="15" />
-        <rect x="0" y="187" rx="10" ry="10" width="100" height="15" />
-        <rect x="3" y="217" rx="10" ry="10" width="80" height="24" />
-        <rect x="121" y="207" rx="10" ry="10" width="32" height="32" />
-      </ContentLoader> :
-      <>
-   <div className='favorite'>
+        return <div className='card'>
+            <div className='favorite'>
             <img onClick={likeWasChanged} width={40} height={40}
               src={isLike ? '/img/unlike.png' : '/img/like.png'} />
               
@@ -68,10 +49,9 @@ const Card = ({
             {/* <button className='button'>add in the bascet</button> */}
             <img onClick={addWasChanged} className='added' width={40} height={40}
               src={isAdded ? '/img/green.png' : '/img/add.png'} />
-        </div>
-          </>}
+            </div>
           </div>
     }
 
 
-export default Card;
+export default CardFavorite;
